@@ -2,12 +2,13 @@ package com.example.appxemphim_nhom6.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
+import androidx.media3.common.util.UnstableApi;
 import com.bumptech.glide.Glide;
 import com.example.appxemphim_nhom6.R;
 import com.example.appxemphim_nhom6.data.model.Episode;
@@ -21,7 +22,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
+@UnstableApi
 public class MovieDetailActivity extends AppCompatActivity {
 
     private ImageView imageViewPoster;
@@ -52,10 +53,14 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         // Xử lý sự kiện click nút xem phim
         buttonWatchMovie.setOnClickListener(view -> {
-            // Khởi động activity phát video
-            Intent intent = new Intent(MovieDetailActivity.this, WatchMovieActivity.class);
-            intent.putExtra("movie_link", movieLink); // movieLink là biến lưu link phim
-            startActivity(intent);
+            if (movieLink != null && !movieLink.isEmpty()) {
+                // Khởi động activity phát video
+                Intent intent = new Intent(this, WatchMovieActivity.class);
+                intent.putExtra("movie_link", movieLink);  // Truyền link phim
+                startActivity(intent);
+            } else {
+                Toast.makeText(MovieDetailActivity.this, "Link phim không khả dụng", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -84,6 +89,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                     if (episodes != null && !episodes.isEmpty()) {
                         ServerData serverData = episodes.get(0).getServerData().get(0);
                         movieLink = serverData.getLinkEmbed(); // Lưu link phim
+                        Log.d("MovieDetailActivity", "Movie Link: " + movieLink);
                     }
 
                 } else {

@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
 
-    private static final String BASE_URL = "https://phimapi.com/";  // Thay bằng URL API thực tế
+    private static final String BASE_URL = "https://phimapi.com/";
     private static Retrofit retrofit = null;
 
     // Phương thức để lấy đối tượng Retrofit

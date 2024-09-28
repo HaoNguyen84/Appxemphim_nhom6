@@ -1,22 +1,18 @@
 package com.example.appxemphim_nhom6.ui;
 
-import android.net.Uri;
-import android.os.Bundle;
-import android.widget.Toast;
-import android.widget.VideoView;
-
-import android.net.Uri;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.ui.PlayerView;
-import androidx.appcompat.app.AppCompatActivity;
-
+import androidx.media3.common.MediaItem;
+import androidx.media3.datasource.DefaultHttpDataSource;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.hls.HlsMediaSource;
+import androidx.media3.ui.PlayerView;
 import com.example.appxemphim_nhom6.R;
+import androidx.media3.common.util.UnstableApi; // Import UnstableApi annotation
 
+@UnstableApi // Đánh dấu class này sử dụng các API không ổn định
 public class WatchMovieActivity extends AppCompatActivity {
-    private SimpleExoPlayer player; // Đổi ExoPlayer thành SimpleExoPlayer
+    private ExoPlayer player;
     private PlayerView playerView;
 
     @Override
@@ -25,16 +21,20 @@ public class WatchMovieActivity extends AppCompatActivity {
         setContentView(R.layout.activity_watch_movie);
 
         playerView = findViewById(R.id.player_view);
-
-        String movieLink = getIntent().getStringExtra("movie_link");
+        //String movieLink = getIntent().getStringExtra("movie_link");
+        String movieLink = "https://s5.phim1280.tv/20240928/DZnilRfG/index.m3u8";
         if (movieLink != null) {
-            // Tạo đối tượng SimpleExoPlayer
-            player = new SimpleExoPlayer.Builder(this).build(); // Sử dụng SimpleExoPlayer
+            // Tạo đối tượng ExoPlayer
+            player = new ExoPlayer.Builder(this).build();
             playerView.setPlayer(player);
 
-            // Thêm video vào player
-            MediaItem mediaItem = MediaItem.fromUri(movieLink);
-            player.setMediaItem(mediaItem);
+            // Tạo HlsMediaSource
+            DefaultHttpDataSource.Factory dataSourceFactory = new DefaultHttpDataSource.Factory();
+            HlsMediaSource hlsMediaSource = new HlsMediaSource.Factory(dataSourceFactory)
+                    .createMediaSource(MediaItem.fromUri(movieLink));
+
+// Thêm video vào player
+            player.setMediaSource(hlsMediaSource);
             player.prepare();
             player.play();
         }
@@ -44,8 +44,8 @@ public class WatchMovieActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         if (player != null) {
-            player.release(); // Giải phóng tài nguyên nếu player không null
-            player = null; // Đặt player về null để tránh lỗi
+            player.release();
+            player = null;
         }
     }
 
@@ -53,7 +53,24 @@ public class WatchMovieActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if (player != null) {
-            player.pause(); // Tạm dừng phát video khi Activity bị tạm dừng
+            player.pause();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (player != null) {
+            player.play();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (player != null) {
+            player.release();
+            player = null;
         }
     }
 }
