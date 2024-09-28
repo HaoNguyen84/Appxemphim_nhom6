@@ -89,6 +89,12 @@ public class MovieDetailActivity extends AppCompatActivity {
                     if (episodes != null && !episodes.isEmpty()) {
                         ServerData serverData = episodes.get(0).getServerData().get(0);
                         movieLink = serverData.getLinkEmbed(); // Lưu link phim
+
+                        // Kiểm tra nếu link trả về chứa "url=" và tách lấy link thực sự
+                        if (movieLink.contains("?url=")) {
+                            movieLink = movieLink.split("\\?url=")[1];
+                        }
+
                         Log.d("MovieDetailActivity", "Movie Link: " + movieLink);
                     }
 

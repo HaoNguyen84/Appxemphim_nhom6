@@ -1,14 +1,17 @@
 package com.example.appxemphim_nhom6.ui;
 
 import android.os.Bundle;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.media3.common.MediaItem;
+import androidx.media3.common.PlaybackException;
+import androidx.media3.common.Player;
 import androidx.media3.datasource.DefaultHttpDataSource;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.hls.HlsMediaSource;
 import androidx.media3.ui.PlayerView;
 import com.example.appxemphim_nhom6.R;
-import androidx.media3.common.util.UnstableApi; // Import UnstableApi annotation
+import androidx.media3.common.util.UnstableApi;
 
 @UnstableApi // Đánh dấu class này sử dụng các API không ổn định
 public class WatchMovieActivity extends AppCompatActivity {
@@ -21,22 +24,29 @@ public class WatchMovieActivity extends AppCompatActivity {
         setContentView(R.layout.activity_watch_movie);
 
         playerView = findViewById(R.id.player_view);
-        //String movieLink = getIntent().getStringExtra("movie_link");
-        String movieLink = "https://s5.phim1280.tv/20240928/DZnilRfG/index.m3u8";
+        String movieLink = getIntent().getStringExtra("movie_link");
         if (movieLink != null) {
-            // Tạo đối tượng ExoPlayer
             player = new ExoPlayer.Builder(this).build();
             playerView.setPlayer(player);
+            // Thêm listener để lắng nghe lỗi
+            player.addListener(new Player.Listener() {
+                @Override
+                public void onPlayerError(PlaybackException error) {
+                    Toast.makeText(WatchMovieActivity.this, "Phim lỗi vui lòng báo cáo cho admin or xem phim khác" + error.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
 
             // Tạo HlsMediaSource
             DefaultHttpDataSource.Factory dataSourceFactory = new DefaultHttpDataSource.Factory();
             HlsMediaSource hlsMediaSource = new HlsMediaSource.Factory(dataSourceFactory)
                     .createMediaSource(MediaItem.fromUri(movieLink));
 
-// Thêm video vào player
+            // Thêm video vào player
             player.setMediaSource(hlsMediaSource);
             player.prepare();
             player.play();
+        } else {
+            Toast.makeText(this, "Link phim không hợp lệ", Toast.LENGTH_SHORT).show();
         }
     }
 
