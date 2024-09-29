@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.media3.common.util.UnstableApi;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,14 +15,14 @@ import com.example.appxemphim_nhom6.data.model.Movie;
 import com.example.appxemphim_nhom6.data.model.MovieResponse;
 import com.example.appxemphim_nhom6.data.network.ApiService;
 import com.example.appxemphim_nhom6.data.network.RetrofitClient;
-import com.example.appxemphim_nhom6.ui.MovieAdapter;
+import com.example.appxemphim_nhom6.adapter.MovieAdapter;
 
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
+@UnstableApi
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -33,8 +35,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         recyclerView = findViewById(R.id.recycler_view_movies);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        // Sử dụng GridLayoutManager với 4 cột
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
+        recyclerView.setLayoutManager(layoutManager);
+
+        // Gọi hàm lấy phim
         fetchMovies();
     }
 
@@ -68,4 +74,5 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 }
+
 

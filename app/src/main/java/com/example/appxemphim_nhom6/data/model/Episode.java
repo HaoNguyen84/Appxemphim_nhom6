@@ -3,8 +3,8 @@ package com.example.appxemphim_nhom6.data.model;
 import java.util.List;
 
 public class Episode {
-    private String server_name; // Trùng với JSON là "server_name"
-    private List<ServerData> server_data; // Trùng với JSON là "server_data"
+    private String server_name;
+    private List<ServerData> server_data;
 
     // Getters and Setters
     public String getServerName() {

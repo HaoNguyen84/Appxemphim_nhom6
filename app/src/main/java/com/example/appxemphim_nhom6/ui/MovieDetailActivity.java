@@ -18,7 +18,6 @@ import com.example.appxemphim_nhom6.data.network.ApiService;
 import com.example.appxemphim_nhom6.data.network.RetrofitClient;
 import com.example.appxemphim_nhom6.data.model.ServerData;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -27,9 +26,10 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     private ImageView imageViewPoster;
     private TextView textViewTitle, textViewDescription, textViewYear, textViewActors, textViewDirector;
-    private Button buttonWatchMovie; // Thêm biến cho nút "Xem Phim"
-    private String movieSlug; // Biến để lưu slug
-    private String movieLink; // Biến để lưu link phim
+    private Button buttonWatchMovie;
+    private String movieSlug;
+    private String movieLink;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +43,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         textViewYear = findViewById(R.id.text_view_detail_year);
         textViewActors = findViewById(R.id.text_view_detail_actors);
         textViewDirector = findViewById(R.id.text_view_detail_director);
-        buttonWatchMovie = findViewById(R.id.button_watch_movie); // Khởi tạo nút "Xem Phim"
+        buttonWatchMovie = findViewById(R.id.button_watch_movie);
 
         // Lấy slug từ Intent
         movieSlug = getIntent().getStringExtra("slug");
@@ -88,13 +88,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                     List<Episode> episodes = response.body().getEpisodes();
                     if (episodes != null && !episodes.isEmpty()) {
                         ServerData serverData = episodes.get(0).getServerData().get(0);
-                        movieLink = serverData.getLinkEmbed(); // Lưu link phim
-
-                        // Kiểm tra nếu link trả về chứa "url=" và tách lấy link thực sự
-                        if (movieLink.contains("?url=")) {
-                            movieLink = movieLink.split("\\?url=")[1];
-                        }
-
+                        movieLink = serverData.getLinkM3u8(); // Lưu link phim
                         Log.d("MovieDetailActivity", "Movie Link: " + movieLink);
                     }
 

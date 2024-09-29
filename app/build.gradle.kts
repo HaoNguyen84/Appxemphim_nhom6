@@ -48,6 +48,6 @@ dependencies {
     implementation ("androidx.media3:media3-ui:1.4.0")
     implementation("androidx.media3:media3-exoplayer:1.4.0")
     implementation ("androidx.media3:media3-exoplayer-hls:1.4.0")
-
+    implementation("androidx.cardview:cardview:1.0.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
 }

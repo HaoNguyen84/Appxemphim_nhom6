@@ -17,7 +17,7 @@ import androidx.media3.common.util.UnstableApi;
 public class WatchMovieActivity extends AppCompatActivity {
     private ExoPlayer player;
     private PlayerView playerView;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
