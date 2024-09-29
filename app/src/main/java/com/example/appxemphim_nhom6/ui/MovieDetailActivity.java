@@ -9,14 +9,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.media3.common.util.UnstableApi;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.example.appxemphim_nhom6.R;
+import com.example.appxemphim_nhom6.adapter.EpisodeAdapter;
 import com.example.appxemphim_nhom6.data.model.Episode;
 import com.example.appxemphim_nhom6.data.model.Movie;
 import com.example.appxemphim_nhom6.data.model.MovieDetailResponse;
 import com.example.appxemphim_nhom6.data.network.ApiService;
 import com.example.appxemphim_nhom6.data.network.RetrofitClient;
 import com.example.appxemphim_nhom6.data.model.ServerData;
+
+import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,6 +36,9 @@ public class MovieDetailActivity extends AppCompatActivity {
     private Button buttonWatchMovie;
     private String movieSlug;
     private String movieLink;
+    private RecyclerView recyclerViewEpisodes;
+    private EpisodeAdapter episodeAdapter;
+    private List<ServerData> serverDataList = new ArrayList<>();
 
 
     @Override
@@ -44,7 +54,9 @@ public class MovieDetailActivity extends AppCompatActivity {
         textViewActors = findViewById(R.id.text_view_detail_actors);
         textViewDirector = findViewById(R.id.text_view_detail_director);
         buttonWatchMovie = findViewById(R.id.button_watch_movie);
-
+        recyclerViewEpisodes = findViewById(R.id.recycler_view_episodes);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
+        recyclerViewEpisodes.setLayoutManager(layoutManager);
         // Lấy slug từ Intent
         movieSlug = getIntent().getStringExtra("slug");
 
@@ -84,28 +96,46 @@ public class MovieDetailActivity extends AppCompatActivity {
                             .load(movie.getPosterUrl())
                             .into(imageViewPoster);
 
-                    // Lấy link_embed từ episodes
+                    // Lấy danh sách các tập phim
                     List<Episode> episodes = response.body().getEpisodes();
                     if (episodes != null && !episodes.isEmpty()) {
-                        ServerData serverData = episodes.get(0).getServerData().get(0);
-                        movieLink = serverData.getLinkM3u8(); // Lưu link phim
-                        Log.d("MovieDetailActivity", "Movie Link: " + movieLink);
-                    }
+                        // Lưu danh sách các tập phim
+                        serverDataList.clear(); // Xóa danh sách cũ
+                        for (Episode episode : episodes) {
+                            List<ServerData> data = episode.getServerData();
+                            if (data != null) {
+                                serverDataList.addAll(data); // Thêm tất cả các tập phim vào danh sách
+                            }
+                        }
 
+                        // Cập nhật RecyclerView với danh sách tập phim
+                        episodeAdapter = new EpisodeAdapter(serverDataList, linkM3u8 -> {
+                            // Khi người dùng click vào tập phim
+                            Intent intent = new Intent(MovieDetailActivity.this, WatchMovieActivity.class);
+                            intent.putExtra("movie_link", linkM3u8);
+                            startActivity(intent);
+                        });
+                        recyclerViewEpisodes.setAdapter(episodeAdapter);
+
+                        // Lấy link của tập đầu tiên
+                        ServerData firstServerData = serverDataList.get(0);
+                        if (firstServerData != null) {
+                            movieLink = firstServerData.getLinkM3u8();
+                            Log.d("MovieDetailActivity", "Link phim tập 1: " + movieLink);
+                        }
+                    } else {
+                        Toast.makeText(MovieDetailActivity.this, "Không có tập phim nào", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(MovieDetailActivity.this, "Failed to load movie details", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MovieDetailActivity.this, "Không thể tải thông tin chi tiết phim", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<MovieDetailResponse> call, Throwable t) {
-                Toast.makeText(MovieDetailActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MovieDetailActivity.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
+
 }
-
-
-
-
-

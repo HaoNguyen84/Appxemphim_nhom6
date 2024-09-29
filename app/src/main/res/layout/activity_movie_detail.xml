@@ -66,6 +66,12 @@
             android:layout_height="wrap_content"
             android:text="Xem Phim"
             android:layout_marginTop="16dp"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_episodes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"/>
     </LinearLayout>
+
 </ScrollView>
 

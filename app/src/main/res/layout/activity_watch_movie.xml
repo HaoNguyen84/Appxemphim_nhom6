@@ -10,14 +10,10 @@
         android:layout_height="wrap_content"
         app:resize_mode="fit"
         app:use_controller="true" />
-
-    <!-- RecyclerView cho danh sách tập phim -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_episodes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/player_view"
-        android:layout_marginTop="8dp"
-        android:padding="8dp" />
+        android:layout_marginTop="16dp"/>
 </RelativeLayout>
 
